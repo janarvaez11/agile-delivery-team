@@ -1,0 +1,539 @@
+{
+  "delivery": "liberaciones_obra",
+  "generated_at": "2026-06-28T00:00:00Z",
+  "epics": [
+    {
+      "id": "E-01",
+      "title": "Flujo de solicitud y observacion en campo",
+      "goal": "El Inspector de Calidad y el Residente de Obra registran solicitudes de liberacion y observaciones con foto directamente en el sistema, eliminando la coordinacion por WhatsApp y garantizando que calidad pueda inspeccionar sin buscar contexto en canales externos.",
+      "personas": ["Inspector de Calidad", "Residente de Obra"],
+      "origin": [
+        "mvp-canvas#funcionalidades-mínimas",
+        "user-stories#US-01",
+        "user-stories#US-02",
+        "user-stories#US-03",
+        "requisitos#R-01",
+        "requisitos#R-02",
+        "requisitos#R-03",
+        "requisitos#R-04",
+        "requisitos#R-05",
+        "requisitos#R-11",
+        "requisitos#R-17",
+        "evidence-map#fotos-sin-referencia",
+        "evidence-map#observaciones-sin-registro-formal",
+        "evidence-map#observaciones-por-chat",
+        "evidence-map#solicitudes-incompletas-de-liberacion"
+      ],
+      "priority": 1,
+      "priority_rationale": "Mayor riesgo de adopcion (campo) y condicion necesaria de todo el sistema: sin datos ingresados correctamente, ninguna otra epica tiene valor; la adopcion del inspector en campo es el supuesto mas fragil del MVP.",
+      "candidate_stories": [
+        {
+          "id": "E-01-S01",
+          "title": "Como Residente de Obra, quiero registrar una solicitud de liberacion con codigo de frente, responsable, documentos adjuntos y estado inicial 'solicitado', para que calidad pueda procesarla sin necesitar mensajes por WhatsApp.",
+          "as_a": "Residente de Obra",
+          "so_that": "Quiero un sistema que sea bonito y se entienda",
+          "origin": ["user-stories#US-01", "requisitos#R-01", "requisitos#R-11"],
+          "notes": "Campos minimos segun R-01: codigo de actividad/frente, responsable, fecha, estado, documentos adjuntos y observaciones abiertas."
+        },
+        {
+          "id": "E-01-S02",
+          "title": "Como Inspector de Calidad, quiero registrar una observacion con descripcion, foto y responsable de correccion directamente desde el celular en el momento de la inspeccion, para no tener que ordenar fotos al final del dia.",
+          "as_a": "Inspector de Calidad",
+          "want": "registrar una observacion con descripcion, foto vinculada y responsable de correccion directamente desde el celular en el momento de la inspeccion",
+          "so_that": "no tener que ordenar fotos al final del dia ni perder la referencia de a que punto corresponde cada evidencia",
+          "origin": ["user-stories#US-02", "requisitos#R-02", "requisitos#R-05"],
+          "notes": "La foto debe quedar vinculada a la observacion especifica, no a la galeria general del dispositivo (criterio de aceptacion US-02). La observacion incluye fecha compromiso."
+        },
+        {
+          "id": "E-01-S03",
+          "title": "Como Inspector de Calidad, quiero que el flujo de registro de una observacion desde el movil no supere un minuto en condiciones normales, para no interrumpir el ritmo de la inspeccion ni generar retrabajo al final del turno.",
+          "as_a": "Inspector de Calidad",
+          "want": "completar el registro de una observacion (descripcion, foto, responsable) desde el movil en menos de un minuto",
+          "so_that": "no interrumpir el ritmo de la inspeccion en campo ni acumular registros pendientes al final del dia",
+          "origin": ["requisitos#R-17", "personas#inspector_calidad"],
+          "notes": "R-17 es un requisito no funcional de usabilidad. El Developer debe definir como medirlo (e.g., pasos de pantalla, tiempo de carga de camara, confirmacion). Esta historia puede refinarse como criterio de aceptacion de E-01-S02 o mantenerse separada si implica trabajo de optimizacion propio."
+        },
+        {
+          "id": "E-01-S04",
+          "title": "Como Inspector de Calidad o Fiscalizador del Cliente, quiero ser el unico rol autorizado para cerrar una observacion o cambiar el estado a 'liberado', para que ningun cambio de estado quede sin la revision del responsable correcto.",
+          "as_a": "Inspector de Calidad o Fiscalizador del Cliente",
+          "want": "que solo mi rol pueda cerrar una observacion o cambiar el estado a 'liberado'",
+          "so_that": "ningun cambio de estado quede sin la revision tecnica del responsable correcto",
+          "origin": ["user-stories#US-03", "requisitos#R-04"],
+          "notes": "Si un usuario con rol 'produccion' intenta cerrar, el sistema bloquea y muestra mensaje. El sistema debe registrar la identidad del usuario que cierra (vinculado a R-06)."
+        },
+        {
+          "id": "E-01-S05",
+          "title": "Como cualquier usuario autenticado, quiero que el estado de la solicitud avance automaticamente segun las acciones registradas (solicitado → observado → corregido → liberado), para que el flujo sea inequivoco y no dependa de actualizaciones manuales fuera del sistema.",
+          "as_a": "cualquier usuario autenticado",
+          "want": "que el estado de la solicitud avance automaticamente segun las acciones del flujo sin intervenciones manuales adicionales",
+          "so_that": "el estado visible refleje siempre la realidad del proceso sin depender de mensajes externos",
+          "origin": ["requisitos#R-03", "mvp-canvas#funcionalidades-mínimas"],
+          "notes": "Todo cambio de estado debe quedar registrado con identidad del usuario y timestamp (R-06). Este requisito es transversal a toda la epica."
+        }
+      ]
+    },
+    {
+      "id": "E-02",
+      "title": "Aprobacion del fiscalizador con evidencia completa",
+      "goal": "El Fiscalizador del Cliente puede revisar y aprobar una liberacion en el primer intento porque toda la evidencia (foto de la observacion, foto de la correccion, identidad de cada responsable y timestamps) esta disponible en un solo lugar dentro del sistema.",
+      "personas": ["Fiscalizador del Cliente"],
+      "origin": [
+        "mvp-canvas#resultado-esperado",
+        "mvp-canvas#métrica-de-éxito",
+        "user-stories#US-04",
+        "requisitos#R-05",
+        "requisitos#R-06",
+        "requisitos#R-12",
+        "requisitos#R-19",
+        "evidence-map#informacion-incompleta-para-aprobar",
+        "evidence-map#multiples-canales",
+        "evidence-map#aprobaciones-acumuladas",
+        "evidence-map#sin-valor-documental"
+      ],
+      "priority": 2,
+      "priority_rationale": "Es la metrica de exito del MVP (tasa de aprobacion en primer intento >= 70% en semana 4); sin esta epica no se puede medir ni demostrar el valor central del producto.",
+      "candidate_stories": [
+        {
+          "id": "E-02-S01",
+          "title": "Como Fiscalizador del Cliente, quiero revisar una solicitud en estado 'corregido' y ver toda la evidencia (foto de la observacion original, foto de la correccion, responsable y timestamp de cada cambio de estado) en un solo lugar, para decidir la aprobacion sin pedir respaldo adicional.",
+          "as_a": "Fiscalizador del Cliente",
+          "want": "revisar una solicitud en estado 'corregido' y ver toda la evidencia reunida (fotos, responsables, timestamps) en un solo lugar",
+          "so_that": "poder decidir la aprobacion sin necesitar pedir respaldo adicional al contratista",
+          "origin": ["user-stories#US-04", "requisitos#R-05", "requisitos#R-06"],
+          "notes": "Vista critica para la metrica de exito del MVP. La evidencia incluye: foto de la observacion original, foto de la correccion, identidad del responsable de cada cambio y timestamp correspondiente."
+        },
+        {
+          "id": "E-02-S02",
+          "title": "Como Fiscalizador del Cliente, quiero registrar mi aprobacion formal con mi identidad y la fecha/hora exacta, para que el estado 'liberado' quede como cierre inmutable e irrefutable en el sistema.",
+          "as_a": "Fiscalizador del Cliente",
+          "want": "registrar mi aprobacion formal con mi identidad autenticada y la fecha/hora exacta del acto de aprobacion",
+          "so_that": "el estado 'liberado' quede como cierre formal e inmutable que pueda presentarse ante auditorias",
+          "origin": ["user-stories#US-04", "requisitos#R-06", "requisitos#R-12"],
+          "notes": "R-12 menciona firma digital con valor legal formal; el MVP Canvas la deja fuera del alcance del piloto. Esta historia cubre el registro digital con identidad y timestamp, que el canvas declara suficiente. Ver OQ-01 sobre aceptacion documental del fiscalizador."
+        },
+        {
+          "id": "E-02-S03",
+          "title": "Como Fiscalizador del Cliente, quiero poder descargar toda la evidencia de un punto (fotos de observacion y de cierre) directamente desde el sistema, para no depender del contratista para obtener capturas cuando las necesito para mis auditorias internas.",
+          "as_a": "Fiscalizador del Cliente",
+          "want": "descargar toda la evidencia (fotos de observacion y de cierre) de un punto de liberacion directamente desde el sistema",
+          "so_that": "no depender del contratista para obtener capturas al momento de mis auditorias internas",
+          "origin": ["requisitos#R-19", "personas#fiscalizador_cliente"],
+          "notes": "R-19 no esta explicitamente en las funcionalidades minimas del canvas ni en fuera de alcance. Ver OQ-04 para que el equipo confirme si entra en el piloto o en la siguiente iteracion."
+        }
+      ]
+    },
+    {
+      "id": "E-03",
+      "title": "Visibilidad del estado para la planificacion diaria",
+      "goal": "El Residente de Obra conoce al inicio de cada jornada que actividades estan bloqueadas y por quien; el Jefe de Proyecto identifica en tiempo real que frentes bloquean la facturacion sin armar resumenes manuales.",
+      "personas": ["Residente de Obra", "Jefe de Proyecto"],
+      "origin": [
+        "user-stories#US-05",
+        "user-stories#US-06",
+        "mvp-canvas#funcionalidades-mínimas",
+        "requisitos#R-07",
+        "requisitos#R-08",
+        "requisitos#R-14",
+        "evidence-map#actividades-bloqueadas-sin-saberlo",
+        "evidence-map#perdida-horas-hombre",
+        "evidence-map#sin-visibilidad-de-quien-tiene-pelota",
+        "evidence-map#avance-no-facturable",
+        "evidence-map#no-saber-bloqueo-critico"
+      ],
+      "priority": 3,
+      "priority_rationale": "Cambia el comportamiento de planificacion del residente y consolida la adopcion del lado de produccion; el tablero del jefe hace tangible la prueba acida del canvas (decision de desactivar grupos de WhatsApp de coordinacion).",
+      "candidate_stories": [
+        {
+          "id": "E-03-S01",
+          "title": "Como Residente de Obra, quiero ver el estado actual de cada actividad/frente (solicitado, observado, corregido, liberado) y el responsable en turno, para planificar el dia siguiente sin descubrir bloqueos en el ultimo momento.",
+          "as_a": "Residente de Obra",
+          "want": "ver el estado actual de cada actividad/frente y el responsable en turno en una sola vista",
+          "so_that": "planificar el dia siguiente sin descubrir bloqueos en el ultimo momento ni perder horas-hombre",
+          "origin": ["user-stories#US-05", "requisitos#R-07"],
+          "notes": "Vista de frentes: para cada actividad muestra estado actual y cual rol tiene la responsabilidad ahora (calidad, produccion o cliente)."
+        },
+        {
+          "id": "E-03-S02",
+          "title": "Como Residente de Obra, quiero ver un indicador diario que diferencie visualmente las actividades con observaciones cuya fecha compromiso ya vencio, para priorizar correcciones al inicio de la jornada sin revisar cada registro una a una.",
+          "as_a": "Residente de Obra",
+          "want": "ver un indicador visual que diferencie las actividades con observaciones cuya fecha compromiso ya vencio del resto en la vista de frentes",
+          "so_that": "priorizar las correcciones urgentes al inicio de la jornada sin revisar manualmente cada registro uno a uno",
+          "origin": ["requisitos#R-14", "user-stories#US-05"],
+          "notes": "US-05 criterio de aceptacion 2: la actividad con fecha compromiso vencida aparece diferenciada visualmente. El Developer debe definir el umbral visual (color, icono, seccion separada)."
+        },
+        {
+          "id": "E-03-S03",
+          "title": "Como Jefe de Proyecto, quiero ver un tablero con el conteo de liberaciones por estado (solicitadas, observadas, corregidas, liberadas, vencidas) en tiempo real, para identificar que frentes bloquean la facturacion sin tener que armar el resumen manualmente.",
+          "as_a": "Jefe de Proyecto",
+          "want": "ver un tablero con el conteo de liberaciones agrupadas por estado en tiempo real, incluyendo una categoria 'vencidas' con responsable identificado y dias de retraso",
+          "so_that": "identificar que frentes bloquean la facturacion y poder escalar sin armar el resumen manualmente",
+          "origin": ["user-stories#US-06", "requisitos#R-08"],
+          "notes": "R-09 (ranking por responsable, dias promedio) esta fuera de alcance del MVP por volumen de datos insuficiente en etapa piloto. El tablero basico de R-08 es suficiente para este MVP."
+        }
+      ]
+    },
+    {
+      "id": "E-04",
+      "title": "Trazabilidad documental e integridad de registros",
+      "goal": "La Coordinadora Documental puede armar dossiers con la cadena completa de cambios de estado, identidades y timestamps directamente desde el sistema, sin perseguir archivos dispersos; y los registros aprobados son inmutables con rastro de auditoria para soportar revisiones del cliente.",
+      "personas": ["Coordinadora Documental"],
+      "origin": [
+        "user-stories#US-07",
+        "mvp-canvas#funcionalidades-mínimas",
+        "requisitos#R-06",
+        "requisitos#R-18",
+        "requisitos#R-01",
+        "evidence-map#evidencia-llega-tarde",
+        "evidence-map#cierre-documental-cuello-botella",
+        "evidence-map#huecos-al-final",
+        "evidence-map#inconsistencia-nomenclaturas"
+      ],
+      "priority": 4,
+      "priority_rationale": "R-06 (trazabilidad por cambio de estado) se construye dentro de E-01 y E-02; esta epica consolida la vista documental y la inmutabilidad para la coordinadora. Menor urgencia de adopcion inicial pero critica antes del primer cierre de periodo facturable.",
+      "candidate_stories": [
+        {
+          "id": "E-04-S01",
+          "title": "Como Coordinadora Documental, quiero consultar el historial completo de una solicitud con todos sus cambios de estado en orden cronologico (quien hizo que y cuando), para armar el dossier sin perseguir archivos de cada area.",
+          "as_a": "Coordinadora Documental",
+          "want": "consultar el historial completo de una solicitud con todos sus cambios de estado en orden cronologico",
+          "so_that": "armar el dossier sin perseguir archivos de cada area ni depender de que cada rol recuerde lo que hizo",
+          "origin": ["user-stories#US-07", "requisitos#R-06"],
+          "notes": "El historial muestra: quien cambio el estado, desde que estado, hacia que estado, y el timestamp exacto. Incluye fotos adjuntas por observacion."
+        },
+        {
+          "id": "E-04-S02",
+          "title": "Como Coordinadora Documental, quiero que los registros aprobados por el fiscalizador no puedan editarse sin que el sistema genere un rastro de auditoria inmutable, para garantizar la integridad documental frente a las auditorias del cliente.",
+          "as_a": "Coordinadora Documental",
+          "want": "que los registros aprobados no puedan editarse sin que el sistema genere un rastro de auditoria inmutable con quien intento modificarlo y cuando",
+          "so_that": "garantizar la integridad documental frente a auditorias internas y externas del cliente",
+          "origin": ["user-stories#US-07", "requisitos#R-18"],
+          "notes": "R-18 es un requisito no funcional de integridad. El Developer debe definir el mecanismo tecnico (e.g., campos de solo lectura post-aprobacion, log de intentos de edicion)."
+        },
+        {
+          "id": "E-04-S03",
+          "title": "Como Coordinadora Documental, quiero que cada solicitud quede asociada al codigo de frente ingresado en el registro original, para organizar el dossier por frente sin reconciliacion manual de nomenclaturas.",
+          "as_a": "Coordinadora Documental",
+          "want": "que cada solicitud, observacion y aprobacion quede asociada al codigo de frente ingresado en el registro original",
+          "so_that": "organizar el dossier por frente sin reconciliacion manual de nomenclaturas entre Excel, plano y sistema",
+          "origin": ["user-stories#US-07", "requisitos#R-01", "personas#coordinador_documental"],
+          "notes": "R-15 (nomenclatura forzada y validada) esta fuera del alcance del piloto segun el MVP Canvas. Esta historia cubre el minimo: el codigo que el usuario ingresa queda persistido y visible en todos los registros de esa solicitud. La validacion formal de nomenclatura es trabajo post-piloto. Ver OQ-03."
+        }
+      ]
+    }
+  ],
+  "stories": [
+    {
+      "id": "E-01-S01",
+      "epic": "E-01",
+      "title": "Registrar solicitud de liberación",
+      "as_a": "Residente de Obra",
+      "want": "registrar una solicitud de liberación con código de frente, responsable, documentos adjuntos y estado inicial 'solicitado'",
+      "so_that": "calidad pueda procesarla sin necesitar coordinar por WhatsApp ni buscar contexto en canales externos",
+      "acceptance_criteria": [
+        "Dado que el Residente está autenticado, cuando crea una nueva solicitud completando código de frente, responsable y fecha, entonces el sistema guarda la solicitud con estado inicial 'solicitado' y la hace visible para los usuarios con rol de calidad.",
+        "Dado que el Residente intenta guardar una solicitud sin código de frente o sin responsable, cuando confirma la acción, entonces el sistema muestra un error indicando el campo obligatorio faltante y no crea la solicitud.",
+        "Dado que la solicitud fue creada, cuando cualquier usuario autenticado la consulta, entonces puede ver el código de frente, el responsable, la fecha de creación, el estado 'solicitado' y los documentos adjuntos en caso de haberlos."
+      ],
+      "estimate": 3,
+      "priority": 1,
+      "dependencies": [],
+      "open_questions": [],
+      "origin": ["user-stories#US-01", "requisitos#R-01", "requisitos#R-11"],
+      "notes": "Campos mínimos según R-01: código de actividad/frente, responsable, fecha, estado, documentos adjuntos. El estado inicial es siempre 'solicitado' al crear."
+    },
+    {
+      "id": "E-01-S02",
+      "epic": "E-01",
+      "title": "Registrar observación con foto desde móvil",
+      "as_a": "Inspector de Calidad",
+      "want": "registrar una observación con descripción, foto vinculada y responsable de corrección directamente desde el celular en el momento de la inspección",
+      "so_that": "la evidencia quede asociada al punto exacto sin necesidad de ordenar fotos al final del día",
+      "acceptance_criteria": [
+        "Dado que el Inspector está autenticado y tiene una solicitud abierta en estado 'solicitado', cuando registra una observación con descripción, foto tomada desde el celular, responsable de corrección y fecha compromiso, entonces el sistema guarda la observación vinculada a esa solicitud específica (no a la galería del dispositivo) y cambia el estado de la solicitud a 'observado'.",
+        "Dado que la foto fue adjuntada a la observación, cuando cualquier usuario autenticado abre esa observación, entonces la foto aparece visible como parte de la observación con referencia explícita a la solicitud, no como imagen suelta.",
+        "Dado que el Inspector completa todos los campos de la observación (descripción, foto, responsable, fecha compromiso) y los confirma desde el celular en condiciones normales de conectividad, cuando envía el registro, entonces el sistema confirma el guardado en no más de 60 segundos desde que el Inspector inicia el registro hasta que recibe la confirmación en pantalla.",
+        "Dado que el campo 'responsable de corrección' está vacío, cuando el Inspector intenta guardar la observación, entonces el sistema muestra un mensaje de error indicando el campo obligatorio y no registra la observación."
+      ],
+      "estimate": 3,
+      "priority": 2,
+      "dependencies": ["E-01-S01"],
+      "open_questions": [],
+      "origin": ["user-stories#US-02", "requisitos#R-02", "requisitos#R-05", "requisitos#R-17"],
+      "notes": "R-17 (flujo en < 1 minuto) absorbido como criterio de aceptación 3 — no implica trabajo técnico separado del diseño del formulario móvil. Riesgo OQ-02: si los frentes del piloto no tienen conectividad estable el criterio de 60 s puede no aplicar; se documenta como riesgo del delivery, no como open_question individual."
+    },
+    {
+      "id": "E-01-S04",
+      "epic": "E-01",
+      "title": "Control de roles para cierre de observaciones y aprobación",
+      "as_a": "Inspector de Calidad",
+      "want": "que solo los usuarios con rol de calidad o de cliente (fiscalizador) puedan cerrar una observación o cambiar el estado a 'liberado'",
+      "so_that": "ningún cambio de estado crítico quede sin la revisión técnica del responsable correcto",
+      "acceptance_criteria": [
+        "Dado que un usuario con rol 'producción' intenta cerrar una observación, cuando confirma la acción, entonces el sistema bloquea la operación y muestra un mensaje indicando que el rol no tiene autorización para cerrar observaciones.",
+        "Dado que un usuario con rol 'calidad' cierra una observación, cuando confirma la acción, entonces el sistema registra la identidad del usuario y el timestamp exacto, avanza el estado de la solicitud al siguiente según el flujo definido, y la acción queda en el historial de auditoría.",
+        "Dado que un usuario con rol 'cliente' (fiscalizador) intenta cerrar una observación o aprobar una liberación, cuando confirma la acción, entonces el sistema permite la operación y registra la identidad del usuario y el timestamp correspondiente.",
+        "Dado que cualquier usuario intenta cambiar el estado a 'liberado' sin tener rol de calidad o de cliente, cuando confirma la acción, entonces el sistema bloquea la operación y muestra un mensaje de rol insuficiente."
+      ],
+      "estimate": 3,
+      "priority": 3,
+      "dependencies": ["E-01-S01"],
+      "open_questions": [],
+      "origin": ["user-stories#US-03", "requisitos#R-04", "requisitos#R-06"],
+      "notes": "Control de autorización transversal al flujo de estados. Vinculado a R-06: cada cierre de rol registra identidad y timestamp en el historial."
+    },
+    {
+      "id": "E-01-S05",
+      "epic": "E-01",
+      "title": "Avance automático de estados del flujo de liberación",
+      "as_a": "cualquier usuario autenticado",
+      "want": "que el estado de la solicitud avance automáticamente a través del flujo (solicitado → observado → corregido → liberado) según las acciones registradas, con la identidad del actor y el timestamp de cada cambio",
+      "so_that": "el estado visible siempre refleje la realidad del proceso sin depender de actualizaciones manuales en canales externos",
+      "acceptance_criteria": [
+        "Dado que el Inspector registra una observación sobre una solicitud en estado 'solicitado', cuando la observación es guardada, entonces el estado de la solicitud cambia automáticamente a 'observado' y el sistema registra la identidad del Inspector y el timestamp del cambio.",
+        "Dado que el Residente marca una solicitud como 'corregida', cuando la acción es confirmada por un usuario con rol autorizado, entonces el estado cambia automáticamente a 'corregido' y el sistema registra la identidad del actor y el timestamp.",
+        "Dado que el Fiscalizador aprueba una solicitud en estado 'corregido', cuando la acción es confirmada, entonces el estado cambia a 'liberado' y el sistema registra la identidad del Fiscalizador y el timestamp, sin posibilidad de retroceder el estado sin rastro de auditoría.",
+        "Dado que cualquier usuario autenticado consulta una solicitud, cuando la visualiza, entonces puede ver el estado actual y en el historial la cadena completa de cambios con identidad del actor y timestamp de cada transición, en orden cronológico."
+      ],
+      "estimate": 3,
+      "priority": 4,
+      "dependencies": ["E-01-S01", "E-01-S02"],
+      "open_questions": [],
+      "origin": ["requisitos#R-03", "requisitos#R-06", "mvp-canvas#funcionalidades-mínimas"],
+      "notes": "Implementa la máquina de estados (R-03) e integra el registro de auditoría por cambio (R-06). Es el núcleo técnico que habilita las épicas E-02, E-03 y E-04."
+    },
+    {
+      "id": "E-02-S01",
+      "epic": "E-02",
+      "title": "Revisar evidencia completa para decidir aprobación",
+      "as_a": "Fiscalizador del Cliente",
+      "want": "revisar una solicitud en estado 'corregido' y ver toda la evidencia (foto de la observación original, foto de la corrección, responsable y timestamp de cada cambio de estado) reunida en un solo lugar",
+      "so_that": "decidir la aprobación sin necesitar pedir respaldo adicional al contratista",
+      "acceptance_criteria": [
+        "Dado que una solicitud está en estado 'corregido', cuando el Fiscalizador la abre, entonces ve en una sola pantalla: la foto de la observación original, la foto de la corrección, el nombre del responsable de cada cambio de estado y el timestamp correspondiente a cada transición.",
+        "Dado que el Fiscalizador está revisando la evidencia de una solicitud, cuando la visualiza, entonces ningún elemento de la evidencia (fotos, responsables, timestamps) requiere salir del sistema o solicitar archivos al contratista para verificarse.",
+        "Dado que una solicitud en estado 'corregido' no tiene foto de corrección adjuntada, cuando el Fiscalizador la abre, entonces el sistema indica claramente que la evidencia de corrección está incompleta, sin ocultar el campo ni el estado."
+      ],
+      "estimate": 3,
+      "priority": 5,
+      "dependencies": ["E-01-S02", "E-01-S05"],
+      "open_questions": [],
+      "origin": ["user-stories#US-04", "requisitos#R-05", "requisitos#R-06"],
+      "notes": "Vista crítica para la métrica de éxito del MVP (tasa de aprobación en primer intento >= 70% en semana 4). Riesgo OQ-01: si el Fiscalizador no acepta la aprobación digital como suficiente, esta historia no cierra el ciclo de valor; es riesgo del delivery, no open_question individual."
+    },
+    {
+      "id": "E-02-S02",
+      "epic": "E-02",
+      "title": "Registrar aprobación formal con identidad y timestamp",
+      "as_a": "Fiscalizador del Cliente",
+      "want": "registrar mi aprobación formal con mi identidad autenticada y la fecha/hora exacta del acto de aprobación",
+      "so_that": "el estado 'liberado' quede como cierre formal e inmutable que pueda presentarse ante auditorías internas del cliente",
+      "acceptance_criteria": [
+        "Dado que el Fiscalizador revisó la evidencia de una solicitud en estado 'corregido', cuando confirma la aprobación, entonces el sistema registra automáticamente su identidad autenticada y la fecha/hora exacta del momento de la aprobación, y cambia el estado a 'liberado'.",
+        "Dado que una solicitud está en estado 'liberado', cuando cualquier usuario intenta cambiar el estado manualmente a uno anterior, entonces el sistema bloquea la acción y muestra un mensaje indicando que el estado 'liberado' es inmutable.",
+        "Dado que una solicitud está en estado 'liberado', cuando cualquier usuario consulta su historial, entonces ve la identidad del Fiscalizador que aprobó, la fecha/hora exacta de la aprobación y el estado final, como registro irrefutable del cierre."
+      ],
+      "estimate": 3,
+      "priority": 6,
+      "dependencies": ["E-02-S01", "E-01-S04"],
+      "open_questions": [],
+      "origin": ["user-stories#US-04", "requisitos#R-06", "requisitos#R-12"],
+      "notes": "R-12 menciona firma digital con valor legal formal; el MVP Canvas la deja fuera del alcance del piloto. Esta historia cubre el registro digital con identidad y timestamp, que el canvas declara suficiente para el piloto. Riesgo OQ-01 documentado en el backlog general."
+    },
+    {
+      "id": "E-03-S01",
+      "epic": "E-03",
+      "title": "Ver estado actual y responsable en turno por frente",
+      "as_a": "Residente de Obra",
+      "want": "consultar el estado actual de cada actividad o frente (solicitado, observado, corregido, liberado) y el rol que tiene la responsabilidad en turno en una sola vista",
+      "so_that": "planificar el día siguiente sin descubrir bloqueos en el último momento ni perder horas-hombre de cuadrilla",
+      "acceptance_criteria": [
+        "Dado que el Residente accede a la vista de frentes, cuando la consulta, entonces ve para cada actividad registrada: su estado actual (solicitado, observado, corregido o liberado) y el rol responsable en turno (calidad, producción o cliente), en una sola pantalla sin necesidad de abrir cada actividad individualmente.",
+        "Dado que el estado de una solicitud cambia por acción de cualquier rol, cuando el Residente actualiza la vista de frentes, entonces el nuevo estado y el responsable en turno se reflejan sin requerir un recargo manual de la aplicación.",
+        "Dado que existen actividades en distintos estados, cuando el Residente consulta la vista de frentes, entonces puede distinguir visualmente qué actividades están bloqueadas (observado) de las que avanzan normalmente (solicitado, corregido, liberado)."
+      ],
+      "estimate": 3,
+      "priority": 7,
+      "dependencies": ["E-01-S05"],
+      "open_questions": [],
+      "origin": ["user-stories#US-05", "requisitos#R-07"],
+      "notes": "Vista consumida por el Residente al cierre de jornada para planificar el día siguiente. El responsable en turno se deriva del estado actual: 'observado' → producción, 'solicitado' → calidad, 'corregido' → cliente."
+    },
+    {
+      "id": "E-03-S02",
+      "epic": "E-03",
+      "title": "Indicador visual de observaciones con fecha compromiso vencida",
+      "as_a": "Residente de Obra",
+      "want": "ver en la vista de frentes un indicador visual que diferencie las actividades con observaciones cuya fecha compromiso ya venció del resto",
+      "so_that": "priorizar las correcciones urgentes al inicio de la jornada sin revisar manualmente cada registro uno a uno",
+      "acceptance_criteria": [
+        "Dado que una observación tiene una fecha compromiso registrada y esa fecha ya pasó sin que la solicitud avance de estado 'observado', cuando el Residente consulta la vista de frentes, entonces la actividad correspondiente aparece con un indicador visual diferenciado (etiqueta 'vencida' o color de alerta) del resto de actividades.",
+        "Dado que el Residente consulta la vista de frentes con actividades vencidas y no vencidas, cuando las visualiza, entonces las actividades vencidas se distinguen sin necesidad de abrir cada registro individual.",
+        "Dado que una observación vencida es corregida y la solicitud avanza al estado 'corregido', cuando el Residente actualiza la vista de frentes, entonces esa actividad deja de mostrarse con el indicador de vencida."
+      ],
+      "estimate": 2,
+      "priority": 8,
+      "dependencies": ["E-03-S01", "E-01-S02"],
+      "open_questions": [],
+      "origin": ["requisitos#R-14", "user-stories#US-05"],
+      "notes": "La fecha compromiso se captura en E-01-S02 al registrar la observación. El indicador visual aplica cuando la fecha compromiso ya pasó y el estado sigue siendo 'observado'."
+    },
+    {
+      "id": "E-03-S03",
+      "epic": "E-03",
+      "title": "Tablero de liberaciones por estado en tiempo real",
+      "as_a": "Jefe de Proyecto",
+      "want": "ver un tablero con el conteo de liberaciones agrupadas por estado (solicitadas, observadas, corregidas, liberadas) en tiempo real, incluyendo una categoría 'vencidas' con el responsable identificado y los días de retraso",
+      "so_that": "identificar qué frentes bloquean la facturación y poder escalar sin tener que armar el resumen manualmente",
+      "acceptance_criteria": [
+        "Dado que el Jefe de Proyecto accede al tablero de control, cuando lo consulta, entonces ve el conteo de liberaciones agrupadas por estado: solicitadas, observadas, corregidas y liberadas, actualizados en tiempo real (los conteos reflejan cambios en menos de 60 segundos desde la última acción en el sistema).",
+        "Dado que existen observaciones cuya fecha compromiso ya venció, cuando el Jefe de Proyecto consulta el tablero, entonces aparece una categoría 'vencidas' separada que muestra el responsable identificado y los días de retraso de cada una.",
+        "Dado que no existen observaciones vencidas, cuando el Jefe de Proyecto consulta el tablero, entonces la categoría 'vencidas' muestra un conteo de cero o no aparece, sin ocultar los demás estados."
+      ],
+      "estimate": 3,
+      "priority": 9,
+      "dependencies": ["E-01-S05"],
+      "open_questions": [],
+      "origin": ["user-stories#US-06", "requisitos#R-08"],
+      "notes": "R-09 (ranking por responsable, días promedio) está fuera del alcance del MVP por volumen de datos insuficiente en etapa piloto. El tablero básico de R-08 es suficiente para el piloto."
+    },
+    {
+      "id": "E-04-S01",
+      "epic": "E-04",
+      "title": "Historial cronológico completo de una solicitud",
+      "as_a": "Coordinadora Documental",
+      "want": "consultar el historial completo de una solicitud con todos sus cambios de estado en orden cronológico, incluyendo quién realizó cada acción y cuándo",
+      "so_that": "armar el dossier sin tener que perseguir archivos o depender de que cada rol recuerde lo que hizo",
+      "acceptance_criteria": [
+        "Dado que la Coordinadora Documental abre una solicitud desde el sistema, cuando consulta el historial, entonces ve la cadena completa de cambios de estado en orden cronológico: el estado de origen, el estado de destino, la identidad del usuario que realizó el cambio y el timestamp exacto de cada transición.",
+        "Dado que una solicitud tiene observaciones con fotos adjuntas, cuando la Coordinadora consulta el historial, entonces las fotos vinculadas a cada observación aparecen accesibles desde el mismo historial, sin necesidad de buscarlas en otro lugar del sistema.",
+        "Dado que la Coordinadora consulta el historial de una solicitud cuyo ciclo no ha terminado (por ejemplo en estado 'observado'), cuando lo visualiza, entonces el historial muestra las transiciones ocurridas hasta ese momento sin ocultar el estado parcial."
+      ],
+      "estimate": 3,
+      "priority": 10,
+      "dependencies": ["E-01-S05"],
+      "open_questions": [],
+      "origin": ["user-stories#US-07", "requisitos#R-06"],
+      "notes": "La trazabilidad de cambios (R-06) se construye en E-01-S05; esta historia expone esa trazabilidad como vista consultable para la Coordinadora. El historial completo incluye el cierre formal de E-02-S02 una vez completado el ciclo."
+    },
+    {
+      "id": "E-04-S02",
+      "epic": "E-04",
+      "title": "Inmutabilidad de registros aprobados con rastro de auditoría",
+      "as_a": "Coordinadora Documental",
+      "want": "que los registros aprobados por el Fiscalizador no puedan editarse sin que el sistema genere un rastro de auditoría inmutable con la identidad de quien intentó modificarlo y el timestamp",
+      "so_that": "garantizar la integridad documental del dossier frente a auditorías internas y externas del cliente",
+      "acceptance_criteria": [
+        "Dado que una solicitud está en estado 'liberado' (aprobada por el Fiscalizador), cuando cualquier usuario intenta editar cualquier campo de esa solicitud, entonces el sistema bloquea la edición y registra en el rastro de auditoría: la identidad del usuario que intentó la modificación, el campo que intentó cambiar y el timestamp del intento.",
+        "Dado que un administrador del sistema intenta editar un registro aprobado, cuando realiza el intento, entonces el sistema registra la acción en el rastro de auditoría inmutable y el intento de modificación queda visible en el historial de la solicitud.",
+        "Dado que la Coordinadora consulta el rastro de auditoría de una solicitud aprobada, cuando lo revisa, entonces ve todos los intentos de modificación registrados con identidad del actor, campo afectado y timestamp, en orden cronológico."
+      ],
+      "estimate": 3,
+      "priority": 11,
+      "dependencies": ["E-02-S02"],
+      "open_questions": [],
+      "origin": ["user-stories#US-07", "requisitos#R-18"],
+      "notes": "R-18 es un requisito no funcional de integridad. El mecanismo técnico mínimo: campos de solo lectura post-aprobación más log de intentos de edición. El rastro de auditoría es inmutable: ni siquiera el administrador puede borrarlo."
+    },
+    {
+      "id": "E-04-S03",
+      "epic": "E-04",
+      "title": "Asociación del código de frente en todos los registros derivados",
+      "as_a": "Coordinadora Documental",
+      "want": "que el código de frente ingresado en la solicitud original quede asociado y visible en todas las observaciones, correcciones y aprobaciones derivadas de esa solicitud",
+      "so_that": "organizar el dossier por frente sin reconciliación manual de nomenclaturas entre Excel, plano y sistema",
+      "acceptance_criteria": [
+        "Dado que una solicitud fue creada con un código de frente, cuando la Coordinadora consulta cualquier observación, corrección o aprobación derivada de esa solicitud, entonces el código de frente aparece asociado a cada registro sin necesidad de ingresarlo nuevamente.",
+        "Dado que la Coordinadora filtra los registros del sistema por código de frente, cuando aplica el filtro, entonces el sistema muestra todas las solicitudes, observaciones y aprobaciones que comparten ese código de frente en una lista unificada."
+      ],
+      "estimate": 2,
+      "priority": 12,
+      "dependencies": ["E-01-S01"],
+      "open_questions": [],
+      "origin": ["user-stories#US-07", "requisitos#R-01", "personas#coordinador_documental"],
+      "notes": "R-15 (nomenclatura forzada y validada) está fuera del alcance del piloto según el MVP Canvas. Esta historia cubre el mínimo: el código ingresado en E-01-S01 se propaga a todos los registros derivados. La validación formal de nomenclatura es trabajo post-piloto (ver OQ-03)."
+    },
+    {
+      "id": "E-02-S03",
+      "epic": "E-02",
+      "title": "Descarga autónoma de evidencia por el Fiscalizador",
+      "as_a": "Fiscalizador del Cliente",
+      "want": "descargar toda la evidencia (fotos de observación y de corrección) de un punto de liberación directamente desde el sistema",
+      "so_that": "obtener los respaldos para mis auditorías internas sin depender del contratista para entregar capturas",
+      "acceptance_criteria": [
+        "Dado que el Fiscalizador está revisando la evidencia de una solicitud, cuando selecciona la opción de descarga de evidencia, entonces el sistema genera un archivo descargable que contiene las fotos de observación y de corrección vinculadas a ese punto, sin requerir intervención del contratista.",
+        "Dado que el Fiscalizador descargó la evidencia de un punto, cuando abre el archivo descargado, entonces las fotos están identificadas con el código de frente y el identificador de la solicitud correspondiente, no con nombres genéricos de archivo."
+      ],
+      "estimate": 2,
+      "priority": 13,
+      "dependencies": ["E-02-S01"],
+      "open_questions": [],
+      "origin": ["requisitos#R-19", "personas#fiscalizador_cliente"],
+      "notes": "Prioridad baja: R-19 no figura en las funcionalidades mínimas del MVP Canvas ni en la lista de fuera de alcance. Incluida como candidata porque resuelve el dolor 'informacion-incompleta-para-aprobar' del Fiscalizador. El equipo debe confirmar si entra en el piloto o en la siguiente iteración (OQ-04)."
+    }
+  ],
+  "out_of_scope": [
+    {
+      "id": "R-09",
+      "description": "Tablero con ranking por responsable y dias promedio para cerrar observaciones",
+      "reason": "Solo tiene valor con volumen de datos acumulado; diferido para iteracion siguiente al piloto.",
+      "origin": "mvp-canvas#fuera-de-alcance"
+    },
+    {
+      "id": "R-10",
+      "description": "Exportacion de reporte por frente en formato PDF o Excel",
+      "reason": "Util para la coordinadora pero no es el nucleo del ciclo de valor; entra en la siguiente iteracion.",
+      "origin": "mvp-canvas#fuera-de-alcance"
+    },
+    {
+      "id": "R-12-firma-legal",
+      "description": "Firma digital con valor legal formal",
+      "reason": "Requiere decision juridica sobre validez. El registro digital en el sistema es suficiente para el piloto.",
+      "origin": "mvp-canvas#fuera-de-alcance"
+    },
+    {
+      "id": "R-13",
+      "description": "Clasificacion de observaciones por criticidad y filtrado por ese criterio",
+      "reason": "Deseable pero no indispensable para probar el ciclo nucleo del MVP.",
+      "origin": "mvp-canvas#fuera-de-alcance"
+    },
+    {
+      "id": "R-15-validacion",
+      "description": "Nomenclatura forzada y validada de frentes y actividades",
+      "reason": "Necesita configuracion inicial por proyecto; se aborda antes del lanzamiento a produccion, no en el piloto.",
+      "origin": "mvp-canvas#fuera-de-alcance"
+    },
+    {
+      "id": "R-16",
+      "description": "Modo offline con sincronizacion automatica al recuperar conectividad",
+      "reason": "Complejidad tecnica alta; se prioriza adopcion en linea antes de invertir en sincronizacion diferida.",
+      "origin": "mvp-canvas#fuera-de-alcance"
+    }
+  ],
+  "open_questions": [
+    {
+      "id": "OQ-01",
+      "question": "¿La aprobacion digital del fiscalizador dentro del sistema tiene valor documental formal suficiente para las auditorias internas del cliente? El MVP Canvas asume que el registro digital es suficiente para el piloto, pero el fiscalizador declara el dolor 'sin-valor-documental' sin confirmar que aceptara la aprobacion digital. Si no la acepta, E-02 no cierra el ciclo de valor.",
+      "blocking": true,
+      "origin": ["mvp-canvas#riesgos-supuestos", "personas#fiscalizador_cliente", "evidence-map#sin-valor-documental"]
+    },
+    {
+      "id": "OQ-02",
+      "question": "¿Hay conectividad suficiente en todos los frentes del piloto para trabajar sin modo offline? Si los frentes del piloto no tienen conectividad estable, los inspectores volverian al papel invalidando la adopcion de E-01. Debe verificarse antes de descartar definitivamente R-16 para el piloto.",
+      "blocking": true,
+      "origin": ["mvp-canvas#riesgos-supuestos", "personas#inspector_calidad", "evidence-map#sin-modo-offline"]
+    },
+    {
+      "id": "OQ-03",
+      "question": "¿Quien configura la nomenclatura inicial de frentes (R-15) y en que momento se hace antes de pasar de piloto a produccion? La historia E-04-S03 cubre el minimo (codigo ingresado por el usuario); la validacion forzada es trabajo post-piloto sin responsable ni fecha definidos.",
+      "blocking": false,
+      "origin": ["mvp-canvas#fuera-de-alcance", "requisitos#R-15"]
+    },
+    {
+      "id": "OQ-04",
+      "question": "¿El requisito R-19 (descarga autonoma de evidencia por el fiscalizador) entra en el piloto o en la siguiente iteracion? No aparece en las funcionalidades minimas del canvas ni en la lista de fuera de alcance. La historia E-02-S03 la incluye como candidata; el equipo debe confirmar su alcance.",
+      "blocking": false,
+      "origin": ["requisitos#R-19", "personas#fiscalizador_cliente"]
+    }
+  ]
+}

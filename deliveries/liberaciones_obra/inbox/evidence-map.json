@@ -1,0 +1,177 @@
+{
+  "discovery": "liberaciones_obra",
+  "generated": "2026-06-21",
+  "interviews": [
+    "coordinador_documental.md",
+    "inspector_calidad.md",
+    "jefe_proyecto.md",
+    "residente_obra.md",
+    "fiscalizador_cliente.md"
+  ],
+  "personas": [
+    {
+      "name": "D. (coordinadora documental)",
+      "role": "coordinador_documental",
+      "primary": true,
+      "backing": "primera mano"
+    },
+    {
+      "name": "I. (inspector de calidad)",
+      "role": "inspector_calidad",
+      "primary": true,
+      "backing": "primera mano"
+    },
+    {
+      "name": "J. (jefe de proyecto)",
+      "role": "jefe_proyecto",
+      "primary": true,
+      "backing": "primera mano"
+    },
+    {
+      "name": "R. (residente de obra)",
+      "role": "residente_obra",
+      "primary": true,
+      "backing": "primera mano"
+    },
+    {
+      "name": "F. (fiscalizador del cliente)",
+      "role": "fiscalizador_cliente",
+      "primary": true,
+      "backing": "primera mano"
+    }
+  ],
+  "pains": [
+    {
+      "id": "evidencia-llega-tarde",
+      "source": "coordinador_documental.md",
+      "persona": "D. (coordinadora documental)"
+    },
+    {
+      "id": "inconsistencia-nomenclaturas",
+      "source": "coordinador_documental.md",
+      "persona": "D. (coordinadora documental)"
+    },
+    {
+      "id": "cierre-documental-cuello-botella",
+      "source": "coordinador_documental.md",
+      "persona": "D. (coordinadora documental)"
+    },
+    {
+      "id": "huecos-al-final",
+      "source": "coordinador_documental.md",
+      "persona": "D. (coordinadora documental)"
+    },
+    {
+      "id": "fotos-sin-referencia",
+      "source": "inspector_calidad.md",
+      "persona": "I. (inspector de calidad)"
+    },
+    {
+      "id": "evidencia-dificil-de-recuperar",
+      "source": "inspector_calidad.md",
+      "persona": "I. (inspector de calidad)"
+    },
+    {
+      "id": "solicitudes-incompletas-de-liberacion",
+      "source": "inspector_calidad.md",
+      "persona": "I. (inspector de calidad)"
+    },
+    {
+      "id": "observaciones-sin-registro-formal",
+      "source": "inspector_calidad.md",
+      "persona": "I. (inspector de calidad)"
+    },
+    {
+      "id": "sin-modo-offline",
+      "source": "inspector_calidad.md",
+      "persona": "I. (inspector de calidad)"
+    },
+    {
+      "id": "cierre-observaciones-sin-control-de-rol",
+      "source": "inspector_calidad.md",
+      "persona": "I. (inspector de calidad)"
+    },
+    {
+      "id": "avance-no-facturable",
+      "source": "jefe_proyecto.md",
+      "persona": "J. (jefe de proyecto)"
+    },
+    {
+      "id": "sin-foto-unica",
+      "source": "jefe_proyecto.md",
+      "persona": "J. (jefe de proyecto)"
+    },
+    {
+      "id": "no-saber-bloqueo-critico",
+      "source": "jefe_proyecto.md",
+      "persona": "J. (jefe de proyecto)"
+    },
+    {
+      "id": "datos-manuales-con-discusion",
+      "source": "jefe_proyecto.md",
+      "persona": "J. (jefe de proyecto)"
+    },
+    {
+      "id": "actividades-bloqueadas-sin-saberlo",
+      "source": "residente_obra.md",
+      "persona": "R. (residente de obra)"
+    },
+    {
+      "id": "perdida-horas-hombre",
+      "source": "residente_obra.md",
+      "persona": "R. (residente de obra)"
+    },
+    {
+      "id": "observaciones-por-chat",
+      "source": "residente_obra.md",
+      "persona": "R. (residente de obra)"
+    },
+    {
+      "id": "observaciones-repetidas",
+      "source": "residente_obra.md",
+      "persona": "R. (residente de obra)"
+    },
+    {
+      "id": "sin-visibilidad-de-quien-tiene-pelota",
+      "source": "residente_obra.md",
+      "persona": "R. (residente de obra)"
+    },
+    {
+      "id": "multiples-canales",
+      "source": "fiscalizador_cliente.md",
+      "persona": "F. (fiscalizador del cliente)"
+    },
+    {
+      "id": "aprobaciones-acumuladas",
+      "source": "fiscalizador_cliente.md",
+      "persona": "F. (fiscalizador del cliente)"
+    },
+    {
+      "id": "informacion-incompleta-para-aprobar",
+      "source": "fiscalizador_cliente.md",
+      "persona": "F. (fiscalizador del cliente)"
+    },
+    {
+      "id": "sin-valor-documental",
+      "source": "fiscalizador_cliente.md",
+      "persona": "F. (fiscalizador del cliente)"
+    }
+  ],
+  "stakeholders_referenced": [
+    {
+      "name": "Cuadrillas de producción",
+      "backing": "referenciada",
+      "sources": ["residente_obra.md", "coordinador_documental.md"]
+    },
+    {
+      "name": "Auditoría del cliente",
+      "backing": "referenciada",
+      "sources": ["fiscalizador_cliente.md"]
+    },
+    {
+      "name": "Alta gerencia / comité de proyecto",
+      "backing": "referenciada",
+      "sources": ["jefe_proyecto.md"]
+    }
+  ]
+}

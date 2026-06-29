@@ -1,0 +1,36 @@
+{
+  "delivery": "liberaciones_obra",
+  "sprint": 1,
+  "sprint_goal": "El equipo de obra registra la primera solicitud de campo con evidencia fotográfica y el Fiscalizador la aprueba formalmente dentro del sistema, sin necesitar WhatsApp ni correos.",
+  "capacity": 20,
+  "committed": 20,
+  "stories": [
+    "E-01-S01",
+    "E-01-S02",
+    "E-01-S04",
+    "E-01-S05",
+    "E-02-S01",
+    "E-02-S02",
+    "E-04-S03"
+  ],
+  "deferred": [
+    "E-03-S01",
+    "E-03-S02",
+    "E-03-S03",
+    "E-04-S01",
+    "E-04-S02",
+    "E-02-S03"
+  ],
+  "active_risks": [
+    {
+      "id": "OQ-01",
+      "description": "Si el Fiscalizador no acepta la aprobación digital como suficiente para sus auditorías internas, E-02-S02 no cierra el ciclo de valor y la métrica del piloto no puede medirse.",
+      "action": "Confirmar con el Fiscalizador antes de la demo del sprint."
+    },
+    {
+      "id": "OQ-02",
+      "description": "Si los frentes del piloto no tienen conectividad estable, los inspectores no pueden usar la app en campo y la adopción de E-01 queda invalidada.",
+      "action": "Verificar cobertura de red en los frentes seleccionados antes del inicio de construcción."
+    }
+  ]
+}
